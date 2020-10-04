@@ -1,0 +1,26 @@
+{
+  "name": "zhihu-api",
+  "version": "1.0.0",
+  "description": "仿知乎API",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sheng14/zhihu-api.git"
+  },
+  "author": "Sheng14",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Sheng14/zhihu-api/issues"
+  },
+  "homepage": "https://github.com/Sheng14/zhihu-api#readme",
+  "dependencies": {
+    "koa": "^2.13.0",
+    "koa2": "^2.0.0-alpha.7"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
