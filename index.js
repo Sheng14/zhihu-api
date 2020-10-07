@@ -3,7 +3,47 @@ const app = new Koa()
 const Router = require('koa-router')
 const router = new Router()
 const userRouter = new Router({prefix: '/users'})
+const bodyParser = require('koa-bodyparser')
 
+// 建一个内存数据库
+const db = [{name: '帝国卫队'}]
+
+// 全部查询
+userRouter.get('/', (ctx) => {
+    ctx.body = db
+})
+
+// 查询特定用户
+userRouter.get('/:id', (ctx) => {
+    ctx.body = db[ctx.params.id * 1]
+})
+
+// 新增用户
+userRouter.post('/', (ctx) => {
+    db.push(ctx.request.body)
+    console.log(ctx.request.body)
+    console.log(db)
+    ctx.body = ctx.request.body
+})
+
+// 更改用户信息（一般是全部更改）
+userRouter.put('/:id', (ctx) => {
+    db[ctx.params.id] = ctx.request.body
+    ctx.body = ctx.request.body
+})
+
+// 删除用户信息
+userRouter.delete('/:id', (ctx) => {
+    db.splice(ctx.params.id * 1, 1)
+    ctx.status = 204
+})
+
+app.use(bodyParser()) // 这个是负责获取body参数！！！必须写在router上面！！！！！
+app.use(userRouter.routes())
+
+app.listen(3000)
+
+/*
 userRouter.get('/', (ctx) => { //  全部查询应该返回数组
     ctx.body = [{name: 'D'}, {name: 'E'}]
 
@@ -24,8 +64,9 @@ userRouter.delete('/', (ctx) => { // 删除用户，返回删除成功的状态�
     ctx.status = 204
 })
 
+app.use(bodyParser())
 app.use(userRouter.routes())
-app.listen(3000)
+*/
 
 /*const auth = async (ctx, next) => { // 假装是校验中间件
     if (ctx.url !== '/users') {
