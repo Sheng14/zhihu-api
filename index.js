@@ -1,6 +1,41 @@
 const Koa = require('koa')
 const app = new Koa()
+const Router = require('koa-router')
+const router = new Router()
+const userRouter = new Router({prefix: '/users'})
 
+const auth = async (ctx, next) => { // 假装是校验中间件
+    if (ctx.url !== '/users') {
+        ctx.throw(401)
+    }
+    await next()
+}
+
+
+router.get('/index', auth, (ctx) => {
+    ctx.body = '这是首页'
+})
+
+router.post('/index', auth, (ctx) => {
+    ctx.body = '首页这是'
+})
+
+userRouter.get('/', auth, (ctx) => {
+    ctx.body = '这是用户'
+})
+
+userRouter.get('/:id', auth, (ctx) => {
+    const id = ctx.params.id
+    ctx.body = `这是用户${id}`
+})
+
+// 注册路由
+app.use(router.routes())
+app.use(userRouter.routes())
+
+app.listen(3000)
+
+/*
 app.use(async (ctx) => {
     if (ctx.url === '/') {
         ctx.body = '这是首页'
@@ -19,9 +54,8 @@ app.use(async (ctx) => {
         ctx.status = 404
     }
 })
+*/
 
-
-app.listen(3000)
 
 /*app.use(async (ctx, next) => {
     console.log(1)
