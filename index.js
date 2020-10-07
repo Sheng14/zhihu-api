@@ -32,6 +32,7 @@ userRouter.get('/:id', auth, (ctx) => {
 // 注册路由
 app.use(router.routes())
 app.use(userRouter.routes())
+app.use(userRouter.allowedMethods())
 
 app.listen(3000)
 
