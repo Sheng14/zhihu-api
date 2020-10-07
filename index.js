@@ -4,7 +4,30 @@ const Router = require('koa-router')
 const router = new Router()
 const userRouter = new Router({prefix: '/users'})
 
-const auth = async (ctx, next) => { // 假装是校验中间件
+userRouter.get('/', (ctx) => { //  全部查询应该返回数组
+    ctx.body = [{name: 'D'}, {name: 'E'}]
+
+})
+userRouter.get('/:id', (ctx) => { // 单体查询，返回一个对象
+    ctx.body = {name: 'D'}
+})
+
+userRouter.post('/', (ctx) => { // 增加用户，返回新建的内容
+    ctx.body = {name: '新建的用户'}
+})
+
+userRouter.put('/:id', (ctx) => { // 修改用户，返回修改的内容
+    ctx.body = {name: '修改后用户'}
+})
+
+userRouter.delete('/', (ctx) => { // 删除用户，返回删除成功的状态码（成功执行但是没有什么内容）
+    ctx.status = 204
+})
+
+app.use(userRouter.routes())
+app.listen(3000)
+
+/*const auth = async (ctx, next) => { // 假装是校验中间件
     if (ctx.url !== '/users') {
         ctx.throw(401)
     }
@@ -33,8 +56,8 @@ userRouter.get('/:id', auth, (ctx) => {
 app.use(router.routes())
 app.use(userRouter.routes())
 app.use(userRouter.allowedMethods())
+*/
 
-app.listen(3000)
 
 /*
 app.use(async (ctx) => {
