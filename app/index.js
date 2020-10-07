@@ -1,10 +1,19 @@
 const Koa = require('koa')
 const app = new Koa()
-const Router = require('koa-router')
-const router = new Router()
-const userRouter = new Router({prefix: '/users'})
+//const Router = require('koa-router')
+// const router = new Router()
+// const userRouter = new Router({prefix: '/users'})
 const bodyParser = require('koa-bodyparser')
+const routing = require('./routes/index') // 引入自动化app.use.....的脚本
 
+// 所以现在只需要确认body可以被访问、注册到app、监听即可！
+app.use(bodyParser())
+routing(app)
+app.listen(3000, () => {
+    console.log('程序运行')
+})
+
+/*
 // 建一个内存数据库
 const db = [{name: '帝国卫队'}]
 
@@ -40,8 +49,7 @@ userRouter.delete('/:id', (ctx) => {
 
 app.use(bodyParser()) // 这个是负责获取body参数！！！必须写在router上面！！！！！
 app.use(userRouter.routes())
-
-app.listen(3000)
+*/
 
 /*
 userRouter.get('/', (ctx) => { //  全部查询应该返回数组
