@@ -6,7 +6,14 @@ const app = new Koa()
 const bodyParser = require('koa-bodyparser')
 const routing = require('./routes/index') // 引入自动化app.use.....的脚本
 const error = require('koa-json-error') // 引入错误处理机制
+const parameter = require('koa-parameter') // 引入参数处理机制
+const mongoose = require('mongoose') // 引入mongoose处理mongodb的连接等
+const { connectionStr } = require('./config') // 拿到mongodb的连接字符串
 
+mongoose.connect(connectionStr, { useUnifiedTopology: true, useNewUrlParser: true }, () => {
+    console.log('连接成功！')
+}) // 连接mongodb
+mongoose.connection.on('error', console.error) // 监听连接中出现的错误
 
 app.use(error({
     postFormat: (e, {stack, ...rest}) => process.env.NODE_ENV === 'production' ? rest : {stack, ...rest}
@@ -26,6 +33,7 @@ app.use(error({
 
 // 所以现在只需要确认body可以被访问、注册到app、监听即可！
 app.use(bodyParser())
+app.use(parameter(app)) // 使用且需要传递app方便后面全局调用
 routing(app)
 app.listen(3000, () => {
     console.log('程序运行')
