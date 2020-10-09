@@ -1,3 +1,47 @@
+const User = require('../models/users') // 导入用户模型
+
+
+class UsersCtl {
+    async find(ctx) {
+        ctx.body = await User.find() // 查找所有用户
+    }
+    async findById(ctx) {
+        const user = await User.findById(ctx.params.id) // 根据id查找用户，id无需再转换成数字！
+        if (!user) {
+            ctx.throw('404', '用户不存在')
+        }
+        ctx.body = user
+    }
+    async create(ctx) {
+        ctx.verifyParams({
+            name: { type: 'string', required: true }
+        })
+        const user = await new User(ctx.request.body).save() // 新建用户且保存到数据库
+        ctx.body = user
+    }
+    async del(ctx) {
+        const user = await User.findByIdAndRemove(ctx.params.id) // 根据id删除用户数据
+        if (!user) {
+            ctx.throw('404', '用户不存在')
+        }
+        ctx.status = 204
+    }
+    async update(ctx) {
+        ctx.verifyParams({
+            name: { type: 'string', required: true }
+        })
+        const user = await User.findByIdAndUpdate(ctx.params.id, ctx.request.body) // 根据id和新信息修改用户信息
+        if (!user) {
+            ctx.throw('404', '用户不存在')
+        }
+        ctx.body = user
+    }
+}
+
+module.exports = new UsersCtl()
+
+
+/*
 // 建一个内存数据库
 const db = [{name: '帝国卫队'}]
 
@@ -41,3 +85,4 @@ class UsersCtl {
 }
 
 module.exports = new UsersCtl()
+*/
