@@ -5,8 +5,15 @@ const app = new Koa()
 // const userRouter = new Router({prefix: '/users'})
 const bodyParser = require('koa-bodyparser')
 const routing = require('./routes/index') // 引入自动化app.use.....的脚本
+const error = require('koa-json-error') // 引入错误处理机制
 
-app.use(async (ctx, next) => { // 错误处理的中间件（写在最前面，兜住所有后面的中间件出现的错误）
+
+app.use(error({
+    postFormat: (e, {stack, ...rest}) => process.env.NODE_ENV === 'production' ? rest : {stack, ...rest}
+})) // 修改默认配置，判断环境给予不同的数据（给不给栈stack的问题） 这里NODE_ENV其实就是跟package.json一致就行，可以随便改！
+
+
+/*app.use(async (ctx, next) => { // 错误处理的中间件（写在最前面，兜住所有后面的中间件出现的错误）
     try {
         await next() // 捕获中间件
     } catch(err) {
@@ -15,7 +22,7 @@ app.use(async (ctx, next) => { // 错误处理的中间件（写在最前面，�
             "message": err.message
         } // 返回错误信息
     }
-})
+})*/
 
 // 所以现在只需要确认body可以被访问、注册到app、监听即可！
 app.use(bodyParser())
