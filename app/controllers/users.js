@@ -3,7 +3,7 @@ const db = [{name: '帝国卫队'}]
 
 class UsersCtl {
     find(ctx) {
-       // a.b 模拟500错误
+       // a.b // 模拟500错误
         ctx.body = db
     }
     findById(ctx) {

@@ -6,6 +6,17 @@ const app = new Koa()
 const bodyParser = require('koa-bodyparser')
 const routing = require('./routes/index') // 引入自动化app.use.....的脚本
 
+app.use(async (ctx, next) => { // 错误处理的中间件（写在最前面，兜住所有后面的中间件出现的错误）
+    try {
+        await next() // 捕获中间件
+    } catch(err) {
+        ctx.status = err.status || err.statusCode || 500 // 返回错误码，500无法在前面两个拿到，所以直接写
+        ctx.body = {
+            "message": err.message
+        } // 返回错误信息
+    }
+})
+
 // 所以现在只需要确认body可以被访问、注册到app、监听即可！
 app.use(bodyParser())
 routing(app)
