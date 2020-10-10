@@ -11,6 +11,7 @@ const mongoose = require('mongoose') // 引入mongoose处理mongodb的连接等
 const { connectionStr } = require('./config') // 拿到mongodb的连接字符串
 const Body = require('koa-body') // 引入支持更多请求体的插件
 const path = require('path')
+const koaStatic = require('koa-static') // 引入静态资源服务
 
 
 mongoose.connect(connectionStr, { useUnifiedTopology: true, useNewUrlParser: true }, () => {
@@ -36,6 +37,7 @@ app.use(error({
 
 // 所以现在只需要确认body可以被访问、注册到app、监听即可！
 // app.use(bodyParser())
+app.use(koaStatic(path.join(__dirname, 'public'))) // 这个只是确定监听哪一个文件夹（public）下面的资源作为静态文件（就像是hs需要指定目录）
 app.use(Body({
     multipart: true, // 启动查询文件
     formidable: {
