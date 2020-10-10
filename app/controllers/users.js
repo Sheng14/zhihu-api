@@ -57,6 +57,13 @@ class UsersCtl {
         const token = jwt.sign({ id, name }, secret, { expiresIn: '1d' }) // 将用户名和id丢入token，加上密钥、设置过期时间
         ctx.body = token
     }
+
+    async checkoutOwner (ctx, next) { // 授权，通过校验是不是自己来决定是否进行下一步操作
+        if (ctx.params.id !== ctx.state.user.id) {
+            ctx.throw(403, `${ctx.params.id}无权限${ctx.state.user.id}`)
+        }
+        await next()
+    }
 }
 
 module.exports = new UsersCtl()
