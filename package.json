@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/Sheng14/zhihu-api#readme",
   "dependencies": {
+    "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
     "koa-json-error": "^3.1.2",

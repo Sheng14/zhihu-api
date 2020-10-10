@@ -14,8 +14,14 @@ class UsersCtl {
     }
     async create(ctx) {
         ctx.verifyParams({
-            name: { type: 'string', required: true }
+            name: { type: 'string', required: true },
+            password: { type: 'number', required: true }
         })
+        const { name } = ctx.request.body
+        const repeatUser = await User.findOne({ name })
+        if (repeatUser) {
+            ctx.throw('409', '用户名已经存在')
+        } // 处理唯一性的逻辑（根据用户名）
         const user = await new User(ctx.request.body).save() // 新建用户且保存到数据库
         ctx.body = user
     }
@@ -28,7 +34,8 @@ class UsersCtl {
     }
     async update(ctx) {
         ctx.verifyParams({
-            name: { type: 'string', required: true }
+            name: { type: 'string', required: false },
+            password: { type: 'number', required: false }
         })
         const user = await User.findByIdAndUpdate(ctx.params.id, ctx.request.body) // 根据id和新信息修改用户信息
         if (!user) {
