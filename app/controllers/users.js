@@ -1,5 +1,6 @@
 const User = require('../models/users') // 导入用户模型
-
+const jwt = require('jsonwebtoken') // 引入jwt校验
+const { secret } = require('../config') // 引入密钥
 
 class UsersCtl {
     async find(ctx) {
@@ -39,9 +40,22 @@ class UsersCtl {
         })
         const user = await User.findByIdAndUpdate(ctx.params.id, ctx.request.body) // 根据id和新信息修改用户信息
         if (!user) {
-            ctx.throw('404', '用户不存在')
+            ctx.throw(404, '用户不存在')
         }
         ctx.body = user
+    }
+    async login(ctx) {
+        ctx.verifyParams({
+            name: { type: 'string', required: true },
+            password: { type: 'number', required: true }
+        }) // 先验证密码用户名写全了没
+        const user = await User.findOne(ctx.request.body) // 通过密码用户名是否查询到东西，是就对了
+        if (!user) {
+            ctx.throw(401, '用户名或密码错误')
+        }
+        const { id, name } = user // 从查询的数据里面拿到用户名和id
+        const token = jwt.sign({ id, name }, secret, { expiresIn: '1d' }) // 将用户名和id丢入token，加上密钥、设置过期时间
+        ctx.body = token
     }
 }
 
