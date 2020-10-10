@@ -1,10 +1,13 @@
 const Router = require('koa-router')
 const router = new Router({prefix: '/users'})
 const { find, findById, update, create, del, login, checkoutOwner} = require('../controllers/users')
-const jwt = require('jsonwebtoken')
+// const jwt = require('jsonwebtoken')
 const { secret } = require('../config')
+const jwt = require('koa-jwt')
 
-const auth = async (ctx, next) => { // 用户认证，判断用户是谁来获取用户信息
+const auth = jwt({ secret })
+
+/*const auth = async (ctx, next) => { // 用户认证，判断用户是谁来获取用户信息
     const { authorization = '' } = ctx.request.header // 拿到header中的授权信息
     console.log(authorization)
     const token = authorization.replace('Bearer ', '') // 取出token
@@ -17,7 +20,7 @@ const auth = async (ctx, next) => { // 用户认证，判断用户是谁来获�
         ctx.throw(401, err.message)
     } // 鉴于可能拿不到用户信息报500错误，这里捕获一下返回比较友好的信息。
     await next()
-}
+}*/
 
 // 全部查询
 router.get('/', find)
