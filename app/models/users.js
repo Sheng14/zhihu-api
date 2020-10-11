@@ -26,7 +26,11 @@ const userSchema = new Schema({
             graduation_year: { type: Number }
         }],
         select: false
-    } // 不管是啥都是{}包着里面写type，若是数组则无需写类型直接[]
+    }, // 不管是啥都是{}包着里面写type，若是数组则无需写类型直接[]
+    following: {
+        type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+        select: false
+    } // 关注人列表
 }) // 实例化一个用户Schema
 
 module.exports = model('User', userSchema) // 将schema转换为模型导出

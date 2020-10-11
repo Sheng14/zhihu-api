@@ -76,6 +76,23 @@ class UsersCtl {
         }
         await next()
     }
+
+    async listFollowing (ctx) { // 获取关注人列表
+        const user = await User.findById(ctx.params.id).select('+following').populate('following') // 找到当前用户的关注列表的关注人信息
+        if (!user) {
+            ctx.throw(404, '没有找到该用户')
+        }
+        ctx.body = user.following
+    }
+
+    async follow (ctx) { // 关注用户
+        const me = await User.findById(ctx.state.user.id).select('+following')
+        if (!me.following.map(id => id.toString()).includes(ctx.params.id)) { // 判断当前关注人列表中有没有id和当前url的id冲突。
+            me.following.push(ctx.params.id)
+            me.save()
+        }
+        ctx.status = 204
+    }
 }
 
 module.exports = new UsersCtl()

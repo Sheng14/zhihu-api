@@ -1,6 +1,6 @@
 const Router = require('koa-router')
 const router = new Router({prefix: '/users'})
-const { find, findById, update, create, del, login, checkoutOwner} = require('../controllers/users')
+const { find, findById, update, create, del, login, checkoutOwner, listFollowing, follow} = require('../controllers/users')
 // const jwt = require('jsonwebtoken')
 const { secret } = require('../config')
 const jwt = require('koa-jwt')
@@ -39,5 +39,11 @@ router.delete('/:id', auth, checkoutOwner, del)
 
 // 登录接口
 router.post('/login', login)
+
+// 获取关注人列表（这里的id是用户id，就是我）
+router.get('/:id/following', listFollowing)
+
+// 关注用户（这里的id是想要关注的用户的id）
+router.put('/following/:id', auth, follow)
 
 module.exports = router
