@@ -92,6 +92,14 @@ class UsersCtl {
         ctx.body = users
     }
 
+    async checkUserExist (ctx, next) { // 校验用户是否存在
+        const user = await User.findById(ctx.params.id)
+        if (!user) {
+            ctx.throw(404, '该用户不存在')
+        }
+        await next()
+    }
+
     async follow (ctx) { // 关注用户
         const me = await User.findById(ctx.state.user.id).select('+following')
         if (!me.following.map(id => id.toString()).includes(ctx.params.id)) { // 判断当前关注人列表中有没有id和当前url的id冲突。
