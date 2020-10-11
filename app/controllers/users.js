@@ -1,6 +1,8 @@
 const User = require('../models/users') // 导入用户模型
 const jwt = require('jsonwebtoken') // 引入jwt校验
 const { secret } = require('../config') // 引入密钥
+const { params } = require('../routes/users')
+const users = require('../models/users')
 
 class UsersCtl {
     async find(ctx) {
@@ -85,11 +87,26 @@ class UsersCtl {
         ctx.body = user.following
     }
 
+    async listFollower (ctx) { // 获取粉丝列表
+        const users = await User.find({following: ctx.params.id}) // 只找following里面有我当前url里面id的用户！
+        ctx.body = users
+    }
+
     async follow (ctx) { // 关注用户
         const me = await User.findById(ctx.state.user.id).select('+following')
         if (!me.following.map(id => id.toString()).includes(ctx.params.id)) { // 判断当前关注人列表中有没有id和当前url的id冲突。
             me.following.push(ctx.params.id)
             me.save()
+        }
+        ctx.status = 204
+    }
+    
+    async unfollow (ctx) { // 取消关注
+        const me = await User.findById(ctx.state.user.id).select('+following')
+        const index = me.following.map(id => id.toString()).indexOf(ctx.params.id) // 获取当前url出现的id在following里面的索引位置方便删除
+        if (index > -1) {
+            me.following.splice(index, 1) // 删除id
+            me.save() // 保存到数据库
         }
         ctx.status = 204
     }
