@@ -9,7 +9,7 @@ const userSchema = new Schema({
     gender: { type: String, enum: ['male', 'female'], default: 'male' , required: true},
     headline: { type: String },
     locations: { type: [{ type: String }] },
-    business: { type: String },
+    business: { type: String, default: '互联网'}, // 所有类型都会以默认值（空或者预设值）展现出来（如果是字符串没有默认值则不会展示该字段）
     employments: {
         type: [{
             company: { type: String },
