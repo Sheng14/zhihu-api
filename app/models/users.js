@@ -8,13 +8,14 @@ const userSchema = new Schema({
     avatar_url: { type: String },
     gender: { type: String, enum: ['male', 'female'], default: 'male' , required: true},
     headline: { type: String },
-    locations: { type: [{ type: String }] },
-    business: { type: String, default: '互联网'}, // 所有类型都会以默认值（空或者预设值）展现出来（如果是字符串没有默认值则不会展示该字段）
+    locations: { type: [{ type: String }], select: false },
+    business: { type: String, default: '互联网', select: false}, // 所有类型都会以默认值（空或者预设值）展现出来（如果是字符串没有默认值则不会展示该字段）
     employments: {
         type: [{
             company: { type: String },
             job: { type: String }
-        }]
+        }],
+        select: false
     },
     educations: {
         type: [{
@@ -23,7 +24,8 @@ const userSchema = new Schema({
             diploma: { type: Number, enum: [1,2,3,4,5] },
             entrance_year: { type: Number },
             graduation_year: { type: Number }
-        }]
+        }],
+        select: false
     } // 不管是啥都是{}包着里面写type，若是数组则无需写类型直接[]
 }) // 实例化一个用户Schema
 

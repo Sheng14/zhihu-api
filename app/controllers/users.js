@@ -7,7 +7,12 @@ class UsersCtl {
         ctx.body = await User.find() // 查找所有用户
     }
     async findById(ctx) {
-        const user = await User.findById(ctx.params.id) // 根据id查找用户，id无需再转换成数字！
+        const { fields } = ctx.query
+        let formatFields = ''
+        if (fields) {
+            formatFields = fields.split(';').filter(f => f).map(f => ' +' + f).join('')
+        } // 将查询字符串按；拆分成数组，过滤掉空的内容，遍历让每项前面加多一个 +，再合并成字符串
+        const user = await User.findById(ctx.params.id).select(formatFields) // 根据id查找用户，id无需再转换成数字！
         if (!user) {
             ctx.throw('404', '用户不存在')
         }
