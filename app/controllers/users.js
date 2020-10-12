@@ -6,7 +6,10 @@ const users = require('../models/users')
 
 class UsersCtl {
     async find(ctx) {
-        ctx.body = await User.find() // 查找所有用户
+        const { per_page = 3 } = ctx.query
+        const page = Math.max(ctx.query.page * 1, 1) - 1
+        const perPage = Math.max(per_page * 1, 1)
+        ctx.body = await User.find().limit(perPage).skip(page * perPage) // 查找所有用户
     }
     async findById(ctx) {
         const { fields } = ctx.query
