@@ -5,7 +5,10 @@ class TopicsCtl {
         const { per_page = 3 } = ctx.query // 获取每页多少数据，这里是为了写一个默认值
         const page = Math.max(ctx.query.page * 1, 1) - 1 // -1是因为第一页无需跳过应该给0！！
         const perPage = Math.max(per_page * 1, 1) // 预防出现小于1的情况
-        ctx.body = await Topic.find().limit(perPage).skip(page * perPage)
+        ctx.body = await Topic
+            .find({ name: new RegExp(ctx.query.q) }) // 加入模糊搜索（利用正则表达式）
+            .limit(perPage)
+            .skip(page * perPage)
     }
 
     async findById (ctx) {
