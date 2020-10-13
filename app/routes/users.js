@@ -1,6 +1,13 @@
 const Router = require('koa-router')
 const router = new Router({prefix: '/users'})
-const { find, findById, update, create, del, login, checkoutOwner, listFollowing, follow, listFollower, unfollow, checkUserExist} = require('../controllers/users')
+const { 
+    find, findById, update, create, del, login, 
+    checkoutOwner, listFollowing, follow, listFollower, 
+    unfollow, checkUserExist, unfollowTopic, followTopic,
+    listFollowingTopics
+} = require('../controllers/users')
+
+const { checkTopicsExist } = require('../controllers/topic')
 // const jwt = require('jsonwebtoken')
 const { secret } = require('../config')
 const jwt = require('koa-jwt')
@@ -51,5 +58,14 @@ router.put('/following/:id', auth, checkUserExist, follow)
 
 // 取消关注用户
 router.delete('/following/:id', auth, checkUserExist, unfollow)
+
+// 关注话题
+router.put('/followingTopics/:id', auth, checkTopicsExist, followTopic)
+
+// 取消关注话题
+router.delete('/followingTopics/:id', auth, checkTopicsExist, unfollowTopic)
+
+// 获取用户的关注话题列表
+router.get('/:id/followingTopics', listFollowingTopics)
 
 module.exports = router

@@ -30,7 +30,11 @@ const userSchema = new Schema({
     following: {
         type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
         select: false
-    } // 关注人列表
+    }, // 关注人列表
+    followingTopics: {
+        type: [{ type: Schema.Types.ObjectId, ref: 'Topic' }],
+        select: false
+    } // 关注话题列表
 }) // 实例化一个用户Schema
 
 module.exports = model('User', userSchema) // 将schema转换为模型导出

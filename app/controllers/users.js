@@ -105,6 +105,14 @@ class UsersCtl {
         ctx.body = user.following
     }
 
+    async listFollowingTopics (ctx) { // 获取关注话题列表
+        const user = await User.findById(ctx.params.id).select('+followingTopics').populate('followingTopics') // 找到当前用户的关注话题列表
+        if (!user) {
+            ctx.throw(404, '没有找到该用户')
+        }
+        ctx.body = user.followingTopics
+    }
+
     async listFollower (ctx) { // 获取粉丝列表
         const users = await User.find({following: ctx.params.id}) // 只找following里面有我当前url里面id的用户！
         ctx.body = users
@@ -135,6 +143,25 @@ class UsersCtl {
             me.save() // 保存到数据库
         }
         ctx.status = 204
+    }
+
+    async followTopic (ctx) { // 关注话题
+        const me = await User.findById(ctx.state.user.id).select('+followingTopics')
+        if (!me.followingTopics.map(id => id.toString()).includes(ctx.params.id)) { // 判断当前关注人列表中有没有id和当前url的id冲突。
+            me.followingTopics.push(ctx.params.id)
+            me.save()
+        }
+        ctx.status = 204
+    }
+
+    async unfollowTopic (ctx) { // 取消关注话题
+        const me = await User.findById(ctx.state.user.id).select('+followingTopics')
+        const index = me.followingTopics.map(id => id.toString()).indexOf(ctx.params.id) // 获取当前url出现的id在following里面的索引位置方便删除
+        if (index > -1) {
+            me.followingTopics.splice(index, 1) // 删除id
+            me.save() // 保存到数据库
+        }
+        ctx.status = 204     
     }
 }
 

@@ -1,4 +1,5 @@
 const Topic = require('../models/topic') // 导入话题模型
+const User = require('../models/users') // 导入用户模型
 
 class TopicsCtl {
     async find (ctx) {
@@ -43,6 +44,19 @@ class TopicsCtl {
         })
         const topic = await Topic.findByIdAndUpdate(ctx.params.id, ctx.request.body)
         ctx.body = topic
+    }
+
+    async checkTopicsExist (ctx, next) {
+        const user = await Topic.findById(ctx.params.id)
+        if (!user) {
+            ctx.throw(404, '该话题不存在')
+        }
+        await next()
+    }
+
+    async topicListFollower (ctx) { // 获取关注该话题的用户
+        const users = await User.find({followingTopics: ctx.params.id}) // 只找following里面有我当前url里面id的用户！
+        ctx.body = users
     }
 }
 
