@@ -17,10 +17,22 @@ class UsersCtl {
     async findById(ctx) {
         const { fields } = ctx.query
         let formatFields = ''
+        let populateStr = ''
         if (fields) {
             formatFields = fields.split(';').filter(f => f).map(f => ' +' + f).join('')
-        } // 将查询字符串按；拆分成数组，过滤掉空的内容，遍历让每项前面加多一个 +，再合并成字符串
-        const user = await User.findById(ctx.params.id).select(formatFields) // 根据id查找用户，id无需再转换成数字！
+            // 将查询字符串按；拆分成数组，过滤掉空的内容，遍历让每项前面加多一个 +，再合并成字符串
+
+            populateStr  = fields.split(';').filter(f => f).map(f => {
+                if (f === 'employments') {
+                    return 'employments.company employments.job'
+                }
+                if (f === 'educations') {
+                    return 'education.school education.majot'
+                }
+                return f
+            }).join(' ') // 这个是为了联动topic表（以前只能查到id，现在可以将id对应的信息都拿到！）
+        }
+        const user = await User.findById(ctx.params.id).select(formatFields).populate(populateStr) // 根据id查找用户，id无需再转换成数字！
         if (!user) {
             ctx.throw('404', '用户不存在')
         }
