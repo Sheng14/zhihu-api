@@ -4,7 +4,7 @@ const {
     find, findById, update, create, del, login, 
     checkoutOwner, listFollowing, follow, listFollower, 
     unfollow, checkUserExist, unfollowTopic, followTopic,
-    listFollowingTopics
+    listFollowingTopics, listQuestions
 } = require('../controllers/users')
 
 const { checkTopicsExist } = require('../controllers/topic')
@@ -67,5 +67,8 @@ router.delete('/followingTopics/:id', auth, checkTopicsExist, unfollowTopic)
 
 // 获取用户的关注话题列表
 router.get('/:id/followingTopics', listFollowingTopics)
+
+// 获取用户的问题列表
+router.get('/:id/questions', listQuestions)
 
 module.exports = router

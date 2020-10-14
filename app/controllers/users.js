@@ -1,6 +1,7 @@
 const User = require('../models/users') // 导入用户模型
 const jwt = require('jsonwebtoken') // 引入jwt校验
 const { secret } = require('../config') // 引入密钥
+const Question = require('../models/questions');
 const { params } = require('../routes/users')
 const users = require('../models/users')
 
@@ -163,6 +164,11 @@ class UsersCtl {
         }
         ctx.status = 204     
     }
+
+    async listQuestions(ctx) { // 获取用户的问题列表
+        const questions = await Question.find({ questioner: ctx.params.id });
+        ctx.body = questions;
+      }
 }
 
 module.exports = new UsersCtl()
