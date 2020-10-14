@@ -7,7 +7,8 @@ const questionSchema = new Schema({
     description: { type: String },
     questioner: { type: Schema.Types.ObjectId, ref: 'User', required: true, select: false },
     topics: {
-        type: [{ type: Schema.Types.ObjectId, ref: 'Topic' }]
+        type: [{ type: Schema.Types.ObjectId, ref: 'Topic' }],
+        select: false
     }
 })
 
