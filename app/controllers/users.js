@@ -1,9 +1,10 @@
 const User = require('../models/users') // 导入用户模型
 const jwt = require('jsonwebtoken') // 引入jwt校验
 const { secret } = require('../config') // 引入密钥
-const Question = require('../models/questions');
-const { params } = require('../routes/users')
-const users = require('../models/users')
+const Question = require('../models/questions')
+const Answer = require('./answers') // 引入答案模型
+// const { params } = require('../routes/users')
+// const users = require('../models/users')
 
 class UsersCtl {
     async find(ctx) {
@@ -168,7 +169,63 @@ class UsersCtl {
     async listQuestions(ctx) { // 获取用户的问题列表
         const questions = await Question.find({ questioner: ctx.params.id });
         ctx.body = questions;
+    }
+
+    async listLikingAnswers (ctx) {
+        const user = await User.findById(ctx.params.id).select('+likingAnswers').populate('likingAnswers')
+        if (!user) {
+            ctx.throw(404, '用户不存在')
+        }
+        ctx.body = user.likingAnswers
+    }
+
+    async likeAnswer (ctx, next) {
+        const me = await User.findById(ctx.state.user.id).select('+likingAnswers')
+        if (!me.likingAnswers.map(id => id.toString()).includes(ctx.params.id)) { // 判断当前关注人列表中有没有id和当前url的id冲突。
+            me.likingAnswers.push(ctx.params.id)
+            me.save()
+            await Answer.findByIdAndUpdate(ctx.params.id, { $inc: { voteCount: 1 } }) // 投票数加1
+        }
+        ctx.status = 204
+        await next()
+    }
+
+    async unlikeAnswer (ctx) {
+        const me = await User.findById(ctx.state.user.id).select('+likingAnswers');
+        const index = me.likingAnswers.map(id => id.toString()).indexOf(ctx.params.id);
+        if (index > -1) {
+          me.likingAnswers.splice(index, 1);
+          me.save();
+          await Answer.findByIdAndUpdate(ctx.params.id, { $inc: { voteCount: -1 } }); // 投票数减一
+        }
+        ctx.status = 204
+    }
+
+    async listDislikingAnswers(ctx) {
+        const user = await User.findById(ctx.params.id).select('+dislikingAnswers').populate('dislikingAnswers');
+        if (!user) { ctx.throw(404, '用户不存在'); }
+        ctx.body = user.dislikingAnswers;
       }
+
+    async dislikeAnswer(ctx, next) {
+        const me = await User.findById(ctx.state.user.id).select('+dislikingAnswers');
+        if (!me.dislikingAnswers.map(id => id.toString()).includes(ctx.params.id)) {
+          me.dislikingAnswers.push(ctx.params.id);
+          me.save();
+        }
+        ctx.status = 204;
+        await next();
+    }
+
+    async undislikeAnswer(ctx) {
+        const me = await User.findById(ctx.state.user.id).select('+dislikingAnswers');
+        const index = me.dislikingAnswers.map(id => id.toString()).indexOf(ctx.params.id);
+        if (index > -1) {
+          me.dislikingAnswers.splice(index, 1);
+          me.save();
+        }
+        ctx.status = 204;
+    }
 }
 
 module.exports = new UsersCtl()

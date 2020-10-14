@@ -4,7 +4,9 @@ const {
     find, findById, update, create, del, login, 
     checkoutOwner, listFollowing, follow, listFollower, 
     unfollow, checkUserExist, unfollowTopic, followTopic,
-    listFollowingTopics, listQuestions
+    listFollowingTopics, listQuestions,
+    listLikingAnswers, likeAnswer, unlikeAnswer,
+    listDislikingAnswers, dislikeAnswer, undislikeAnswer
 } = require('../controllers/users')
 
 const { checkTopicsExist } = require('../controllers/topic')
@@ -70,5 +72,13 @@ router.get('/:id/followingTopics', listFollowingTopics)
 
 // 获取用户的问题列表
 router.get('/:id/questions', listQuestions)
+
+// 答案的赞与踩
+router.get('/:id/likingAnswers', listLikingAnswers);
+router.put('/likingAnswers/:id', auth, checkAnswerExist, likeAnswer, undislikeAnswer);
+router.delete('/likingAnswers/:id', auth, checkAnswerExist, unlikeAnswer);
+router.get('/:id/dislikingAnswers', listDislikingAnswers);
+router.put('/dislikingAnswers/:id', auth, checkAnswerExist, dislikeAnswer, unlikeAnswer);
+router.delete('/dislikingAnswers/:id', auth, checkAnswerExist, undislikeAnswer);
 
 module.exports = router

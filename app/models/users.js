@@ -34,7 +34,14 @@ const userSchema = new Schema({
     followingTopics: {
         type: [{ type: Schema.Types.ObjectId, ref: 'Topic' }],
         select: false
-    } // 关注话题列表
+    }, // 关注话题列表
+    likingAnswers: {
+        type: [{ type: Schema.Types.ObjectId, ref: 'Answer' }],
+        select: false
+    }, // 赞过答案列表
+    dislikingAnswers: {
+        type: [{ type: Schema.Types.ObjectId, ref: 'Answer' }]
+    } // 踩过的答案列表
 }) // 实例化一个用户Schema
 
 module.exports = model('User', userSchema) // 将schema转换为模型导出
