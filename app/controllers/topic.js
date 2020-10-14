@@ -1,5 +1,6 @@
 const Topic = require('../models/topic') // 导入话题模型
 const User = require('../models/users') // 导入用户模型
+const Question = require('../models/questions') // 导入问题模型
 
 class TopicsCtl {
     async find (ctx) {
@@ -57,6 +58,11 @@ class TopicsCtl {
     async topicListFollower (ctx) { // 获取关注该话题的用户
         const users = await User.find({followingTopics: ctx.params.id}) // 只找following里面有我当前url里面id的用户！
         ctx.body = users
+    }
+
+    async questionListFollower (ctx) {
+        const questions = await Question.find({ topics: ctx.params.id });
+        ctx.body = questions;
     }
 }
 
