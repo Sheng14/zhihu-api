@@ -81,4 +81,9 @@ router.get('/:id/dislikingAnswers', listDislikingAnswers);
 router.put('/dislikingAnswers/:id', auth, checkAnswerExist, dislikeAnswer, unlikeAnswer);
 router.delete('/dislikingAnswers/:id', auth, checkAnswerExist, undislikeAnswer);
 
+// 收藏答案
+router.get('/:id/collectingAnswers', listCollectingAnswers);
+router.put('/collectingAnswers/:id', auth, checkAnswerExist, collectAnswer);
+router.delete('/collectingAnswers/:id', auth, checkAnswerExist, uncollectAnswer);
+
 module.exports = router
