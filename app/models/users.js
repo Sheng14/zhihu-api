@@ -45,7 +45,7 @@ const userSchema = new Schema({
     collectingAnswers: {
         type: [{ type: Schema.Types.ObjectId, ref: 'Answer' }],
         select: false,
-    }
+    } // 收藏的答案列表
 }) // 实例化一个用户Schema
 
 module.exports = model('User', userSchema) // 将schema转换为模型导出
