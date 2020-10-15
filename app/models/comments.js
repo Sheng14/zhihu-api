@@ -6,7 +6,9 @@ const commentSchema = new Schema({
   content: { type: String, required: true },
   commentator: { type: Schema.Types.ObjectId, ref: 'User', required: true, select: false },
   questionId: { type: String, required: true },
-  answerId: { type: String, required: true }
+  answerId: { type: String, required: true },
+  rootCommentId: { type: String },
+  replyTo: { type: Schema.Types.ObjectId, ref: 'User' }
 })
 
 module.exports = model('Comment', commentSchema);
